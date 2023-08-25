@@ -1,8 +1,12 @@
 use std::{collections::BTreeSet, num::NonZeroU32, str::FromStr};
 
+use arboard::Clipboard;
+#[cfg(target_os = "linux")]
+use arboard::SetExtLinux;
+
 use clap::Parser;
 use rand::{prelude::Distribution, seq::IteratorRandom, Rng};
-use snafu::{OptionExt, Snafu};
+use snafu::{OptionExt, ResultExt, Snafu};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
@@ -42,6 +46,11 @@ struct Args {
     /// Be verbose.
     #[clap(short, long)]
     verbose: bool,
+
+    /// Copy generated password to the clipboard. In this case the generated
+    /// password won't be printed to the stdout.
+    #[clap(long)]
+    copy: bool,
 
     /// Length of the generated password, in unicode scalar values.
     #[clap(default_value_t = nonzero_ext::nonzero!(20u32))]
@@ -161,6 +170,28 @@ pub enum Error {
     /// No symbols are allowed to generate password with.
     #[snafu(display("No symbols are allowed to generate password with"))]
     EmptySet,
+
+    /// Unable to initialize clipboard.
+    #[snafu(display("Unable to initialize clipboard"))]
+    InitClipboard {
+        /// Source error.
+        source: arboard::Error,
+    },
+
+    /// Unable to store the password to the clipboard.
+    #[snafu(display("Unable to store the password to the clipboard"))]
+    ClipboardStore {
+        /// Source error.
+        source: arboard::Error,
+    },
+
+    ForkFailed {
+        source: nix::errno::Errno,
+    },
+
+    SessionCreate {
+        source: nix::errno::Errno,
+    },
 }
 
 fn main() -> snafu::Report<Error> {
@@ -178,6 +209,7 @@ fn run() -> Result<(), Error> {
         disallowed,
         length,
         verbose,
+        copy,
     } = Args::parse();
 
     let level = if verbose {
@@ -230,11 +262,37 @@ fn run() -> Result<(), Error> {
         tracing::warn!("There is only one symbol available for password generation")
     }
 
-    let result: String = rand::rngs::OsRng
+    let password: String = rand::rngs::OsRng
         .sample_iter(&symbols)
         .take(length.get() as usize)
         .collect();
-    println!("{result}");
+    if copy {
+        #[cfg(target_os = "linux")]
+        {
+            match unsafe { nix::unistd::fork() }.context(ForkFailedSnafu)? {
+                nix::unistd::ForkResult::Parent { child } => {
+                    tracing::debug!("Process daemonized and now running with pid {child}");
+                }
+                nix::unistd::ForkResult::Child => {
+                    nix::unistd::setsid().context(SessionCreateSnafu)?;
+                    tracing::debug!("Session created");
+                    let mut c = Clipboard::new().context(InitClipboardSnafu)?;
+                    c.set().wait().text(password).context(ClipboardStoreSnafu)?;
+                    tracing::debug!("Lost clipboard ownership; terminating");
+                }
+            }
+        }
+
+        #[cfg(not(target_os = "linux"))]
+        {
+            Clipboard::new()
+                .context(InitClipboardSnafu)?
+                .set_text(password)
+                .context(ClipboardStoreSnafu)?;
+        }
+    } else {
+        println!("{password}");
+    }
 
     Ok(())
 }
