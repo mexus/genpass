@@ -185,11 +185,17 @@ pub enum Error {
         source: arboard::Error,
     },
 
+    /// Unable to fork the process.
+    #[snafu(display("Unable to fork the process"))]
     ForkFailed {
+        /// Source error.
         source: nix::errno::Errno,
     },
 
+    /// Unable to create a session (see `man 2 setsid`).
+    #[snafu(display("Unable to create a session (see `man 2 setsid`)"))]
     SessionCreate {
+        /// Source error.
         source: nix::errno::Errno,
     },
 }
