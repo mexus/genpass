@@ -4,6 +4,38 @@ A super simple password generator.
 
 ## Usage
 
+## Examples
+
+To generate a password without any special symbols, but allow any of `!@#$%-` to
+appear though:
+
+```
+$ genpass --no-special --allow '!@#$%-'
+pJd!q$IdrQ49P2g9n2CGlzP0
+```
+
+Use `-v/--verbose` flags to see symbols groups:
+
+```
+$ genpass --no-special --allow '!@#$%-' -v
+DEBUG genpass: Add symbols ABCDEFGHIJKLMNOPQRSTUVWXYZ
+DEBUG genpass: Add symbols abcdefghijklmnopqrstuvwxyz
+DEBUG genpass: Add symbols 0123456789
+DEBUG genpass: Add symbols !#$%-@
+DEBUG genpass: Symbols to use: #$%-0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+FnDnoO1exy6HTdQquLQWw6d0
+```
+
+To put the generated password to the clipboard:
+
+```
+$ genpass --no-special --allow '!@#$%-' -c
+$ xclip -selection clipboard -o
+ZCiE10G@ZtP5N#s6s8YVyMvM
+```
+
+## Explanation
+
 When run without arguments, some groups of symbols are enabled by default. You
 can explicitly disable any of them by providing a `--no-...` argument, e.g.
 `--no-latin`. Please run with `--help` for the full list of arguments.
