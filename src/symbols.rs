@@ -126,3 +126,33 @@ impl FromStr for SymbolsSet {
         Ok(Self { inner: values })
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn add() {
+        let result = SymbolsSet::from(['a'])
+            .add(&SymbolsSet::from(['b']))
+            .inner
+            .into_iter()
+            .collect::<Vec<char>>();
+        assert_eq!(result, vec!['a', 'b']);
+    }
+
+    #[test]
+    fn remove() {
+        let result = SymbolsSet::from(['a', 'b'])
+            .subtract(&SymbolsSet::from(['b']))
+            .expect("Must be non-empty")
+            .inner
+            .into_iter()
+            .collect::<Vec<char>>();
+        assert_eq!(result, vec!['a']);
+
+        assert!(SymbolsSet::from(['a', 'b'])
+            .subtract(&SymbolsSet::from(['b', 'a']))
+            .is_none());
+    }
+}
