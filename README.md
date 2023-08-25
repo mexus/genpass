@@ -2,9 +2,7 @@
 
 A super simple password generator.
 
-## Usage
-
-## Examples
+## Usage examples
 
 To generate a password without any special symbols, but allow any of `!@#$%-` to
 appear though:
@@ -34,7 +32,7 @@ $ xclip -selection clipboard -o
 ZCiE10G@ZtP5N#s6s8YVyMvM
 ```
 
-## Explanation
+## Some details
 
 When run without arguments, some groups of symbols are enabled by default. You
 can explicitly disable any of them by providing a `--no-...` argument, e.g.
@@ -78,7 +76,8 @@ directly into the clipboard.
 
 Here's the `-c/--copy` flag for you.
 
-On Linux it will cause the process to fork and wait in the background until somebody else changes the contents of the clipboard. *say hello to X11*
+On Linux it will cause the process to fork and wait in the background until
+somebody else changes the contents of the clipboard. *say hello to X11*
 
 On other platforms the generated password is simply put to the clipboard.
 
