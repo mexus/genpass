@@ -32,14 +32,16 @@ struct Args {
     #[clap(long)]
     no_special: bool,
 
-    /// Additional whitelist of symbols. You can repeat this multiple times
-    /// to allow additional sets of symbols.
+    /// Allow additional symbols.
+    ///
+    /// You can repeat this multiple times to allow additional sets of symbols.
     #[clap(short = 'a', long = "allow")]
     allowed: Vec<SymbolsSet>,
 
-    /// Additional blacklist of symbols. You can repeat this multiple times
-    /// to forbid additional sets of symbols. Takes precedence over the
-    /// whitelist.
+    /// Deny additional symbols.
+    ///
+    /// You can repeat this multiple times to forbid additional sets of symbols.
+    /// Takes precedence over the whitelist.
     #[clap(short = 'd', long = "deny")]
     disallowed: Vec<SymbolsSet>,
 
@@ -47,13 +49,14 @@ struct Args {
     #[clap(short, long)]
     verbose: bool,
 
-    /// Copy generated password to the clipboard. In this case the generated
-    /// password won't be printed to the stdout.
-    #[clap(long)]
+    /// Copy generated password to the clipboard.
+    ///
+    /// In this case the generated password won't be printed to the stdout.
+    #[clap(short, long)]
     copy: bool,
 
     /// Length of the generated password, in unicode scalar values.
-    #[clap(default_value_t = nonzero_ext::nonzero!(20u32))]
+    #[clap(default_value_t = nonzero_ext::nonzero!(24u32))]
     length: NonZeroU32,
 }
 
