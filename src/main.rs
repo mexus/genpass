@@ -1,3 +1,7 @@
+//! A simple tool to generate passwords.
+
+#![deny(missing_docs)]
+
 use std::num::NonZeroU32;
 
 use clap::Parser;
