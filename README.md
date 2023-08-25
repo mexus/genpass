@@ -28,6 +28,17 @@ order:
 If the resulting symbols list is empty, the program will refuse to generate a
 password and terminate with an error code.
 
+Length of the generated password can be adjusted by simply adding the desired
+positive amount of symbols to the command line, no flags needed: `genpass 12`
+will generated a password of 12 unicode scalar values.
+
+## Randomness
+
+The application doesn't do anything special about fetching the random values, it
+completely relies on the random generation (`getrandom`) of your operation
+system, see more at
+[`OsRng`][https://docs.rs/rand/latest/rand/rngs/struct.OsRng.html].
+
 ## Clipboard
 
 While it might be not 100% safe, you might want to put the generated password
