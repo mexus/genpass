@@ -37,7 +37,7 @@ will generated a password of 12 unicode scalar values.
 The application doesn't do anything special about fetching the random values, it
 completely relies on the random generation (`getrandom`) of your operation
 system, see more at
-[`OsRng`][https://docs.rs/rand/latest/rand/rngs/struct.OsRng.html].
+[`OsRng`](https://docs.rs/rand/latest/rand/rngs/struct.OsRng.html).
 
 ## Clipboard
 
