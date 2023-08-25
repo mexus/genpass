@@ -129,6 +129,9 @@ impl FromStr for SymbolsSet {
 
 #[cfg(test)]
 mod test {
+    use quickcheck::TestResult;
+    use quickcheck_macros::quickcheck;
+
     use super::*;
 
     #[test]
@@ -154,5 +157,25 @@ mod test {
         assert!(SymbolsSet::from(['a', 'b'])
             .subtract(&SymbolsSet::from(['b', 'a']))
             .is_none());
+    }
+
+    #[quickcheck]
+    fn parse(input: String) -> TestResult {
+        if input.is_empty() {
+            return TestResult::discard();
+        }
+
+        let symbols: BTreeSet<char> = input.chars().collect();
+        let symbols_parsed: SymbolsSet = input.parse().unwrap();
+
+        assert_eq!(symbols, symbols_parsed.inner);
+
+        TestResult::passed()
+    }
+
+    #[test]
+    fn parse_empty() {
+        let result: Result<SymbolsSet, _> = "".parse();
+        result.unwrap_err();
     }
 }

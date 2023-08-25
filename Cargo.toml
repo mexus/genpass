@@ -15,3 +15,7 @@ rand = "0.8.5"
 snafu = { version = "0.7.5", features = ["rust_1_61"] }
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.17", features = ["fmt"] }
+
+[dev-dependencies]
+quickcheck = "1.0.3"
+quickcheck_macros = "1.0.0"
