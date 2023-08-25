@@ -158,6 +158,7 @@ fn check_args() {
 /// Run error.
 #[derive(Debug, Snafu)]
 pub enum Error {
+    /// No symbols are allowed to generate password with.
     #[snafu(display("No symbols are allowed to generate password with"))]
     EmptySet,
 }
